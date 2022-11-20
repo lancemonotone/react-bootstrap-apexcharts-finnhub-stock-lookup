@@ -1,5 +1,4 @@
 import './App.css'
-require('dotenv').config()
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import StockOverviewPage from './pages/StockOverviewPage'
 import StockDetailPage from './pages/StockDetailPage'
