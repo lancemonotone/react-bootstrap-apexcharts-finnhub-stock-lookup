@@ -1,0 +1,23 @@
+.autocomplete {
+  .dropdown-menu.show {
+    max-height: 40vh;
+    overflow: hidden;
+    overflow-y: auto;
+    min-width: 100%;
+
+    ul {
+      display: table;
+
+      li {
+        display: table-row;
+        white-space: nowrap;
+        cursor: pointer;
+
+        span {
+          display: table-cell;
+          padding-inline: .5rem;
+        }
+      }
+    }
+  }
+}

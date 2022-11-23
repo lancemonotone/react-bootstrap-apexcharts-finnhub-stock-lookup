@@ -1,0 +1,23 @@
+.stocklist {
+  table {
+    th, td {
+      text-align: right;
+      white-space: nowrap;
+
+      &.detail-link {
+        cursor: pointer;
+      }
+
+      &.delete-symbol {
+        svg {
+          visibility: hidden;
+          cursor: pointer;
+        }
+
+        &:hover svg {
+          visibility: visible;
+        }
+      }
+    }
+  }
+}
