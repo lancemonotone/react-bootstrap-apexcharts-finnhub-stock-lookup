@@ -126,7 +126,7 @@ const StockList = () => {
   )
 
   if ( loading ) return <div className="d-grid justify-content-center">
-    <GridLoader color="#2C3034"/>
+    <GridLoader color="#ffffff"/>
   </div>
 
   return (

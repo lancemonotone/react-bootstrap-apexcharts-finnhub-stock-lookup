@@ -7,11 +7,11 @@
 
     a.detail-link {
       text-decoration: none;
-      color: $white;
+      color: var(--bs-white);
       display: block;
 
       &:hover {
-        color: $warning;
+        color: var(--bs-warning);
       }
     }
 
@@ -23,9 +23,9 @@
       svg {
         cursor: pointer;
         text-align: center;
-        color: $white;
+        color: var(--bs-white);
         &:hover {
-          color: $danger;
+          color: var(--bs-danger);
         }
       }
     }

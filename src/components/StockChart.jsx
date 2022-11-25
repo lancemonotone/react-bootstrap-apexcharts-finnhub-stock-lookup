@@ -50,7 +50,8 @@ const StockChart = ( { chartData, symbol } ) => {
     options: {
       colors: getColor(),
       chart: {
-        id: 'stock-chart'
+        id: 'stock-chart',
+        foreColor: '#FFFFFF'
       },
       xaxis: {
         type: 'datetime',
@@ -62,6 +63,7 @@ const StockChart = ( { chartData, symbol } ) => {
         decimalsInFloat: 2,
       },
       tooltip: {
+        enabled: false,
         x: {
           format: 'dd MMM yyyy',
         },
@@ -93,7 +95,7 @@ const StockChart = ( { chartData, symbol } ) => {
     return timeSeriesKeys.map( ts => (
         <button
             key={ ts }
-            className={ `btn btn-sm btn-outline-dark ${ ts === timeSeries && 'active' }` }
+            className={ `btn btn-sm btn-outline ${ ts === timeSeries && 'active' }` }
             onClick={ () => setTimeSeries( ts ) }
         >
           { timeSeriesLabels[ ts ] }

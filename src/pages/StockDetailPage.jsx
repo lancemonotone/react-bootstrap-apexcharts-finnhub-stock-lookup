@@ -91,7 +91,7 @@ const StockDetailPage = () => {
       <>
         <div className="d-flex justify-content-center position-relative">
           <h2 className="text-center fw-bold">{ symbol }</h2>
-          <button className="btn btn-sm btn-outline-dark position-absolute end-0 top-50" onClick={ () => window.history.back() }>Back</button>
+          <button className="btn btn-sm btn-outline position-absolute end-0 top-50" onClick={ () => window.history.back() }>Back</button>
         </div>
         { chartData && <StockChart chartData={ chartData } symbol={ symbol }/> }
         { chartData && <StockData symbol={ symbol }/> }
