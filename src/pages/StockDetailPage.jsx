@@ -1,22 +1,28 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { useFinnhub } from 'react-finnhub'
+import StockChart from '../components/StockChart'
+import StockData from '../components/StockData'
 
 const StockDetailPage = () => {
   const { symbol } = useParams()
-  let finnhub = useFinnhub()
-  const [ chartData, setChartData ] = useState( {} )
+  const finnhub = useFinnhub()
+  const [ chartData, setChartData ] = useState( undefined )
+  // const [ loading, setLoading ] = useState( true )
 
-  function formatChartData( group ) {
-    return group.t.map( ( t, i ) => ( {
-      time: t * 1000,
-      open: group.o[ i ],
-      high: group.h[ i ],
-      low: group.l[ i ],
-      close: group.c[ i ],
-      volume: group.v[ i ],
-    } ) )
-  }
+  // get number of seconds in one day
+  let oneDayInSeconds = 60 * 60 * 24
+
+  // get current time in seconds
+  let now = Math.floor( Date.now() / 1000 )
+
+  let lastWorkday = getLastWorkday( now, oneDayInSeconds )
+
+  // get one week ago in seconds
+  let oneWeekAgo = now - 604800
+
+  // get one year ago in seconds
+  let oneYearAgo = now - 31536000
 
   function getLastWorkday( now, oneDayInSeconds ) {
     if ( new Date().getDay() === 1 ) {
@@ -34,53 +40,61 @@ const StockDetailPage = () => {
     }
   }
 
+  const chartResolutions = [
+    {
+      from: lastWorkday,
+      resolution: 60,
+    }, {
+      from: oneWeekAgo,
+      resolution: 'D',
+    }, {
+      from: oneYearAgo,
+      resolution: 'W',
+    } ]
+
+  function formatChartData( data ) {
+    if ( data.s === 'no_data' ) {
+      return []
+    }
+
+    return data.t.map( ( t, i ) => ( {
+      time: t * 1000,
+      open: data.o[ i ],
+      high: data.h[ i ],
+      low: data.l[ i ],
+      close: data.c[ i ],
+      volume: data.v[ i ],
+    } ) )
+  }
+
   useEffect( () => {
-    // get number of seconds in one day
-    let oneDayInSeconds = 60 * 60 * 24
+    // setLoading( true )
 
-    // get current time in seconds
-    let now = Math.floor( Date.now() / 1000 )
-
-    let lastWorkday = getLastWorkday( now, oneDayInSeconds )
-
-    // get one week ago in seconds
-    let oneWeekAgo = now - 604800
-
-    // get one year ago in seconds
-    let oneYearAgo = now - 31536000
-
-    const chartResolutions = [
-      {
-        from: lastWorkday,
-        resolution: 60,
-      }, {
-        from: oneWeekAgo,
-        resolution: 'D',
-      }, {
-        from: oneYearAgo,
-        resolution: 'W',
-      } ].map( r => {
+    const results = Promise.all( chartResolutions.map( r => {
       return finnhub.stockCandles( symbol, r.resolution, r.from, now )
-    } )
+    } ) )
 
-    Promise.all( chartResolutions )
-        .then( responses => {
+    results.then( responses => {
           console.log( 'responses', responses )
-          const data = {
-            day: formatChartData( responses[ 0 ].data ),
-            week: formatChartData( responses[ 1 ].data ),
+
+          return {
             year: formatChartData( responses[ 2 ].data ),
+            week: formatChartData( responses[ 1 ].data ),
+            day: formatChartData( responses[ 0 ].data ),
           }
-          console.log( 'formattedChartData', data )
-          setChartData( data )
         } )
+        .then( data => setChartData( data ) )
         .catch( e => console.log( e ) )
   }, [] )
 
   return (
       <>
-        <h1>Stock Detail Page</h1>
-        <p>{ symbol }</p>
+        <div className="d-flex justify-content-center position-relative">
+          <h2 className="text-center fw-bold">{ symbol }</h2>
+          <button className="btn btn-sm btn-outline-dark position-absolute end-0 top-50" onClick={ () => window.history.back() }>Back</button>
+        </div>
+        { chartData && <StockChart chartData={ chartData } symbol={ symbol }/> }
+        { chartData && <StockData symbol={ symbol }/> }
       </>
   )
 }

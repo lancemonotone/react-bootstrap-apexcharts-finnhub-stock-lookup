@@ -3,19 +3,29 @@
     th, td {
       text-align: right;
       white-space: nowrap;
+    }
 
-      &.detail-link {
-        cursor: pointer;
+    a.detail-link {
+      text-decoration: none;
+      color: $white;
+      display: block;
+
+      &:hover {
+        color: $warning;
       }
+    }
 
-      &.delete-symbol {
-        svg {
-          visibility: hidden;
-          cursor: pointer;
-        }
-
-        &:hover svg {
-          visibility: visible;
+    td.delete-symbol {
+      button {
+        border: none;
+        background: none;
+      }
+      svg {
+        cursor: pointer;
+        text-align: center;
+        color: $white;
+        &:hover {
+          color: $danger;
         }
       }
     }

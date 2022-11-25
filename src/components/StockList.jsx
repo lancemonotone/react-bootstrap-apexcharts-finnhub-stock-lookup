@@ -1,19 +1,33 @@
 import { useContext, useEffect, useState } from 'react'
 import { useFinnhub } from 'react-finnhub'
-import { AiFillCaretDown, AiFillCaretUp, AiFillDelete } from 'react-icons/ai'
-import { WatchListContext } from '../context/watchListContext'
+import { AiFillCaretDown, AiFillCaretUp } from 'react-icons/ai'
+import { AiFillCloseCircle } from 'react-icons/ai'
+import { AppContext } from '../context/appContext'
 import { useNavigate } from 'react-router-dom'
+import { GridLoader } from 'react-spinners'
 
+/**
+ * `StockList` component
+ * @returns {JSX.Element}
+ * @constructor
+ */
 const StockList = () => {
-  const { watchList, deleteSymbol } = useContext( WatchListContext )
+  const { watchList, deleteSymbol } = useContext( AppContext )
   const finnhub = useFinnhub()
   const [ symbols, setSymbols ] = useState( [] )
   const navigate = useNavigate()
+  const [ loading, setLoading ] = useState( true )
 
-  /**
-   * Fetch stock data from Finnhub
-   */
+  // reload the watchlist every 5 minutes
   useEffect( () => {
+    const interval = setInterval( () => {
+      getSymbols()
+    }, 15000 )
+    return () => clearInterval( interval )
+  }, [] )
+
+  function getSymbols() {
+    setLoading( true )
     const quotes = watchList.map( symbol => finnhub.quote( symbol ) )
 
     Promise.all( quotes ).then( results => {
@@ -24,10 +38,18 @@ const StockList = () => {
         }
       } )
     } ).then( symbols => {
+      setLoading( false )
       setSymbols( symbols )
     } ).catch( e => {
       console.log( e )
     } )
+  }
+
+  /**
+   * Fetch stock data from Finnhub
+   */
+  useEffect( () => {
+    getSymbols()
   }, [ watchList ] )
 
   /**
@@ -58,9 +80,11 @@ const StockList = () => {
 
   /**
    * Navigate to stock detail page
+   * @param e
    * @param symbol
    */
-  const handleSymbolSelect = symbol => {
+  const handleSymbolSelect = ( e, symbol ) => {
+    e.preventDefault()
     navigate( `/detail/${ symbol }` )
   }
 
@@ -71,16 +95,13 @@ const StockList = () => {
   const renderTable = () => (
       symbols.map( item => (
           <tr key={ item.symbol }>
-            <th scope="row"
-                className={ 'text-start detail-link' }
-                onClick={ () => handleSymbolSelect( item.symbol ) }
-            >
-              { item.symbol }
+            <th scope="row">
+              <a href="true"
+                 className={ 'text-start detail-link' }
+                 onClick={ ( e ) => handleSymbolSelect( e, item.symbol ) }>
+                { item.symbol }
+              </a>
             </th>
-            <td className={ 'delete-symbol' }
-                onClick={ () => deleteSymbol( item.symbol ) }>
-              <AiFillDelete/>
-            </td>
             <td>{ item.data.c }</td>
             <td className={ getChangeStyle( item.data.d ).color }>
               { item.data.d }
@@ -94,20 +115,27 @@ const StockList = () => {
             <td>{ item.data.l }</td>
             <td>{ item.data.o }</td>
             <td>{ item.data.pc }</td>
+            <td className="delete-symbol">
+              <button type="button" onClick={ () => deleteSymbol( item.symbol ) }>
+                <AiFillCloseCircle/>
+              </button>
+            </td>
           </tr>
       ) )
   )
 
+  if ( loading ) return <div className="d-grid justify-content-center">
+    <GridLoader color="#2C3034"/>
+  </div>
+
   return (
       <>
-        <h2>StockList</h2>
         <div className={ 'stocklist table-responsive' }>
-          <table className={ 'table table-dark table-striped table-hover mt-5' }>
+          <table className={ 'table table-dark table-striped table-hover' }>
             <caption>Current Stock Stats</caption>
             <thead>
             <tr>
               <th scope={ 'col' } className={ 'text-start' }>Symbol</th>
-              <th scope={ 'col' }>&nbsp;</th>
               <th scope={ 'col' }>Current</th>
               <th scope={ 'col' }>Change</th>
               <th scope={ 'col' }>Change %</th>
@@ -115,6 +143,7 @@ const StockList = () => {
               <th scope={ 'col' }>Low</th>
               <th scope={ 'col' }>Open</th>
               <th scope={ 'col' }>PClose</th>
+              <th scope={ 'col' }>&nbsp;</th>
             </tr>
             </thead>
             <tbody className={ 'table-group-divider' }>
