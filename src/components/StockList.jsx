@@ -22,7 +22,8 @@ const StockList = () => {
   useEffect( () => {
     const interval = setInterval( () => {
       getSymbols()
-    }, 15000 )
+    }, 5 * 60 * 1000 )
+
     return () => clearInterval( interval )
   }, [] )
 
