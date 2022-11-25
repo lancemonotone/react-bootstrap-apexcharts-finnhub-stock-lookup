@@ -6,20 +6,20 @@ import { finnhubClient, FinnhubProvider } from 'react-finnhub'
 import { AppContextProvider } from './context/appContext'
 
 function App() {
-  const client = finnhubClient( import.meta.env.VITE_FINNHUB_API_KEY )
+  const client = finnhubClient(import.meta.env.VITE_FINNHUB_API_KEY)
   return (
-      <main className="container mx-auto my-3">
+    <main className="container mx-auto my-3">
         <FinnhubProvider client={ client }>
           <AppContextProvider>
             <BrowserRouter>
               <Routes>
-                <Route path={ '/' } element={ <StockOverviewPage/> }/>
-                <Route path={ '/detail/:symbol' } element={ <StockDetailPage/> }/>
+                <Route path={'/'} element={<StockOverviewPage />} />
+                <Route path={'/detail/:symbol'} element={<StockDetailPage />} />
               </Routes>
             </BrowserRouter>
           </AppContextProvider>
         </FinnhubProvider>
-      </main>
+    </main>
   )
 }
 

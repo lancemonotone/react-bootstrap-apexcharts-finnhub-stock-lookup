@@ -18,7 +18,8 @@
     "react-finnhub": "^1.0.7",
     "react-icons": "^4.6.0",
     "react-router-dom": "^6.4.3",
-    "react-spinners": "^0.13.6"
+    "react-spinners": "^0.13.6",
+    "react-toggle-dark-mode": "^1.1.1"
   },
   "devDependencies": {
     "@types/react": "^18.0.22",
