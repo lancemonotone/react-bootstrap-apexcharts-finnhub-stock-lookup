@@ -1,5 +1,5 @@
 import './assets/scss/app.scss'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import StockOverviewPage from './pages/StockOverviewPage'
 import StockDetailPage from './pages/StockDetailPage'
 import { finnhubClient, FinnhubProvider } from 'react-finnhub'
@@ -11,12 +11,12 @@ function App() {
     <main className="container mx-auto my-3">
         <FinnhubProvider client={ client }>
           <AppContextProvider>
-            <BrowserRouter>
+            <HashRouter>
               <Routes>
                 <Route index element={<StockOverviewPage />} />
                 <Route path={'/detail/:symbol'} element={<StockDetailPage />} />
               </Routes>
-            </BrowserRouter>
+            </HashRouter>
           </AppContextProvider>
         </FinnhubProvider>
     </main>
